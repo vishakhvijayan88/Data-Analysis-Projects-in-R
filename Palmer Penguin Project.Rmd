@@ -1,0 +1,111 @@
+---
+title: "Penguin Plots"
+author: "Vishakh"
+date: "2022-09-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Palmer Penguins
+
+
+## Comparison of Palmer Penguin Species using R
+
+
+### Introduction
+
+
+This is a practice data analysis for comparison of Palmer Penguin Species and their features using R.
+
+The initial step is to setup the environment for analysis by loading the `tidyverse` and `palmerpenguins` packages.
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+```
+
+
+### Summary of Data
+
+
+Now let's get an overview of the 'penguins' dataset. For that we can use `str()` and `head()` functions.
+
+This will the datatypes and the column names along with other details.
+
+```{r}
+str(penguins)
+head(penguins)
+```
+
+
+### Exploring the data
+
+
+Now that we have seen an overview of the dataset, we can work on getting some insights on the features of the penguin species.
+
+Let's determine the maximum and average of flipper length and body mass of each species of penguins
+
+Let's analyze the flipper lengths first for each species:
+
+```{r}
+flipperlength_summary <- penguins %>%
+  group_by(species) %>%
+  drop_na() %>%
+  summarize(max(flipper_length_mm), min(flipper_length_mm), mean(flipper_length_mm)) %>%
+  rename('max' = 'max(flipper_length_mm)', 'min' = 'min(flipper_length_mm)', 'avg' = 'mean(flipper_length_mm)')
+flipperlength_summary
+```
+
+Now let's analyze the body mass next:
+
+```{r}
+bodymass_summary <- penguins %>%
+  group_by(species) %>%
+  drop_na() %>%
+  summarize(max(body_mass_g), min(body_mass_g), mean(body_mass_g)) %>%
+  rename('max' = 'max(body_mass_g)', 'min' = 'min(body_mass_g)', 'avg' = 'mean(body_mass_g)')
+flipperlength_summary
+```
+
+
+
+### Visualize the data
+
+
+Now that we have analyzed the flipper length and body mass of each species, let's visualize and compare the two features using a scatter plots.
+
+First let's create a plot which compares the flipper length and body mass for entire dataset regardless of the species.
+
+```{r}
+ggplot(data = penguins) + geom_point(mapping = aes(x = body_mass_g, y = flipper_length_mm))
+```
+
+This shows that there is a relation between body mass and flipper length. Let's see if there is a trend using a simple smooth trend line.
+
+```{r}
+ggplot(data = penguins) + geom_point(mapping = aes(x = body_mass_g, y = flipper_length_mm)) + geom_smooth(mapping = aes(x = body_mass_g, y = flipper_length_mm))
+```
+
+The line shows there is a relationsship between the features but not exactly a linear relationship. 
+Now let's compare how the flipper length and body mass is related in each species.
+
+```{r}
+ggplot(data = penguins) + geom_point(mapping = aes(x = body_mass_g, y = flipper_length_mm, color = species))
+```
+
+From this plot we can identify that the *Gentoo* species is clearly stands out from other two species with longer flipper length and high body mass.
+
+Let's look at them seperately in multiple plots
+
+```{r}
+ggplot(data = penguins) + geom_point(mapping = aes(x = body_mass_g, y = flipper_length_mm, color = species)) + facet_wrap(~species)
+```
+
+
+### Conclusion
+
+
+From this analysis using the provided data sample, we can infer that *Adelie* is the smallest penguin species and *Gentoo* is the largest among the three species. More data samples and further analysis is needed to get a more insight into this relation and determine if there is any direct relation between the features of the penguin species.
